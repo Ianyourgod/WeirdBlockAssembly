@@ -49,12 +49,12 @@
     registerGeneric();
 
     import registerRuntime from "../resources/blocks/runtime.js";
-    import registerCore from "../resources/blocks/core.js";
     import registerControl from "../resources/blocks/control.js";
+    import registerVariables from "../resources/blocks/variables.js";
     
-    registerCore();
     registerControl();
     registerRuntime();
+    registerVariables();
 
     const en = {
         rtl: false,

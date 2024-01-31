@@ -13,26 +13,37 @@ class Compiler {
      * @returns {string} Generated code.
      */
     compile(workspace) {
-        const code = javascriptGenerator.workspaceToCode(workspace);
+        const code = "\n".concat(javascriptGenerator.workspaceToCode(workspace));
 
-        window.ifCount = 0;
+        window.ifCount = 1;
+        window.vars = {};
 
         const topCode = [
             "saveRam 0 0", 
             // the free space pointer. I'm too lazy to implement a free function so
             // if you run out you're fucked
-            "set r1 0",
-            "set r2 0",
-            "set r3 0",
-            "set r4 0",
-            "set r5 0",
-            "set r6 0",
-            "set r7 0",
+            "set 0 r0",
+            "set 0 r1",
+            "set 0 r2",
+            "set 0 r3",
+            "set 0 r4",
+            "set 0 r5",
+            "set 0 r6",
+            "set 0 r7",
+        
+            
+            "call func_start",
+            "ifEqReg r7 0 else0",
+            "  exit_error",
+            "label else0",
+            "  exit_clean",
         ].join("\n")
+
 
         return [
             topCode,
-            code
+            code,
+            `${code.includes("\nlabel func_start\n") ? "" : "label func_start\nreturn"}`
         ].join("\n")
     }
 }

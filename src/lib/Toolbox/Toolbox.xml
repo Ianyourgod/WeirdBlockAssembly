@@ -1,5 +1,5 @@
 <xml>
-    <category name="Runtime" colour="#FF7B39">
+    <category name="Runtime" colour="#FFDD39">
         <block type="runtime_onstart" />
         <block type="runtime_return" />
     </category>
@@ -7,6 +7,11 @@
     <category name="Control" colour="#FFAB19">
         <block type="control_ifthen" />
         <block type="control_ifthenelse" />
+    </category>
+
+    <category name="Variables" colour="#FF7B39">
+        <block type="variable_set" />
+        <block type="variable_get" />
     </category>
 
     <category name="Literals" colour="#5E3">

@@ -21,7 +21,8 @@ function register() {
         colour: categoryColor,
     }, (block) => {
         const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
-        return `label func_start\n${BLOCKS}\n`;
+
+        return `label func_start\n${BLOCKS}\n${BLOCKS.includes("\nreturn\n") ? "" : "return\n"}`;
     })
 
     registerBlock(`${categoryPrefix}return`, {
