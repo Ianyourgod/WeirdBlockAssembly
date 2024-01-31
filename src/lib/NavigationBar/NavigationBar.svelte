@@ -5,15 +5,15 @@
     const switchTheme = () => {
         const id = "tb:theme";
         const currentData = localStorage.getItem(id);
-        if (currentData === "dark") {
-            localStorage.setItem(id, "");
+        if (currentData === "") {
+            localStorage.setItem(id, "light");
         } else {
-            localStorage.setItem(id, "dark");
+            localStorage.setItem(id, "");
         }
         window.themeUpdated_();
         console.log(
             "switched theme to",
-            currentData === "dark" ? "light" : "dark"
+            currentData === "light" ? "dark" : "light"
         );
     };
 </script>

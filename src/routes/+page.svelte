@@ -103,42 +103,13 @@
     let projectID = "";
     let lastGeneratedCode = "";
 
-    const extensionImageStates = {
-        icon: {
-            failed: false,
-            square: false,
-            loading: false,
-            image: "",
-        },
-        menuicon: {
-            failed: false,
-            square: false,
-            loading: false,
-            image: "",
-        },
-    };
     const extensionMetadata = {
-        id: "extensionID",
-        name: "Extension",
-        docsURL: "",
-        color1: "#0088ff",
-        color2: "#0063ba",
-        color3: "",
-    };
+        name: "code"
+    }
 
     function updateGeneratedCode() {
-        extensionMetadata.name = "Extension";
-        extensionMetadata.id = "extensionID";
-        if (projectName) {
-            extensionMetadata.name = projectName;
-        }
-        if (projectID) {
-            extensionMetadata.id = projectID;
-        }
         const code = compiler.compile(
-            workspace,
-            extensionMetadata,
-            extensionImageStates
+            workspace
         );
         lastGeneratedCode = code;
     }
@@ -244,74 +215,6 @@
         });
     }
 
-    // code display & handling
-    function beautifyGeneratedCode(code) {
-        const beautified = beautify.js(code, {
-            indent_size: 4,
-            space_in_empty_paren: true,
-        });
-        return beautified;
-    }
-    function displayGeneratedCode(code) {
-        const beautified = beautifyGeneratedCode(code);
-        const highlighted = Prism.highlight(
-            beautified,
-            Prism.languages.javascript
-        );
-        return highlighted;
-    }
-
-    // image importing
-    function extensionIconAdded(event) {
-        console.log(event);
-        const filePicker = event.target;
-        // check if we have a file
-        if (!filePicker.files || !filePicker.files[0]) {
-            // remove the image
-            extensionImageStates.icon.failed = false;
-            extensionImageStates.icon.square = false;
-            extensionImageStates.icon.loading = false;
-            extensionImageStates.icon.image = "";
-            updateGeneratedCode();
-            return;
-        }
-        const file = filePicker.files[0];
-
-        extensionImageStates.icon.loading = true;
-        const fileReader = new FileReader();
-        fileReader.onload = () => {
-            // file finished loading
-            const url = fileReader.result;
-            extensionImageStates.icon.image = url;
-            updateGeneratedCode();
-            // start checking the other stuff
-            const image = new Image();
-            image.onload = () => {
-                extensionImageStates.icon.failed = false;
-                extensionImageStates.icon.square = image.width === image.height;
-                // mark as loading finished
-                extensionImageStates.icon.loading = false;
-            };
-            image.onerror = () => {
-                extensionImageStates.icon.failed = true;
-                extensionImageStates.icon.square = false;
-                // mark as loading finished
-                extensionImageStates.icon.loading = false;
-            };
-            image.src = url;
-        };
-        fileReader.readAsDataURL(file);
-    }
-
-    // validation
-    function isExtensionIDInvalid(id) {
-        return Boolean(String(id).match(/[^a-z0-9]/gim));
-    }
-
-    // Modals
-    const ModalState = {
-        extensionColors: false,
-    };
 </script>
 
 <CreateBlockModal
@@ -319,42 +222,11 @@
     color2={extensionMetadata.color2}
     color3={extensionMetadata.color3}
 />
-{#if ModalState.extensionColors}
-    <ExtensionColorsModal
-        color1={extensionMetadata.color1}
-        color2={extensionMetadata.color2}
-        color3={extensionMetadata.color3}
-        on:completed={(colors) => {
-            ModalState.extensionColors = false;
-            extensionMetadata.color1 = colors.detail.color1;
-            extensionMetadata.color2 = colors.detail.color2;
-            extensionMetadata.color3 = colors.detail.color3;
-            updateGeneratedCode();
-        }}
-        on:cancel={() => {
-            ModalState.extensionColors = false;
-            updateGeneratedCode();
-        }}
-    />
-{/if}
+
 <NavigationBar>
     <NavigationButton>File</NavigationButton>
     <NavigationButton>Edit</NavigationButton>
     <NavigationDivider />
-    <input
-        class="project-name"
-        type="text"
-        placeholder="Extension ID (ex: extensionID)"
-        style="margin-left:4px;margin-right:4px"
-        data-invalid={isExtensionIDInvalid(projectID)}
-        bind:value={projectID}
-        on:change={updateGeneratedCode}
-    />
-    {#if isExtensionIDInvalid(projectID)}
-        <p style="color:white;margin-left:4px">
-            <b>Extension ID must be only letters and numbers.</b>
-        </p>
-    {/if}
     <NavigationDivider />
     <input
         class="project-name"
@@ -368,118 +240,18 @@
 <div class="main">
     <div class="row-menus">
         <div class="row-first-submenus">
-            <div class="blockMenuButtons">
-                <StyledButton
-                    on:click={() => {
-                        ModalState.extensionColors = true;
-                    }}
-                >
-                    Edit Extension Colors
-                </StyledButton>
-                <div style="margin-left:8px" />
-                <StyledButton
-                    on:click={() => {
-                        CreateBlockModalScript.open();
-                    }}
-                >
-                    Create an Extension Block
-                </StyledButton>
-                <div style="margin-left:8px" />
-                <div class="extensionMenuPreview">
-                    <div style="text-align: center;">
-                        {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
-                            <div
-                                class="extensionBubbleIcon"
-                                style={`border: 0; border-radius: 0; background-image: url(${extensionImageStates.icon.image})`}
-                            />
-                        {:else}
-                            <div
-                                class="extensionBubbleIcon"
-                                style={`background: ${extensionMetadata.color1}; border-color: ${extensionMetadata.color2}`}
-                            />
-                        {/if}
-                        <div class="extensionBubbleName">
-                            {#if projectName}
-                                {projectName}
-                            {:else}
-                                Extension
-                            {/if}
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="blocklyWrapper">
                 <BlocklyComponent {config} locale={en} bind:workspace />
             </div>
         </div>
         <div class="row-submenus">
-            <div class="assetsWrapper">
-                <h1>Assets</h1>
-                <p>
-                    Extra things that will appear under
-                    {#if projectName}
-                        "{projectName}"
-                    {:else}
-                        "Extension"
-                    {/if}
-                    in the block list.
-                    <br />
-                    These things are not required, so you can leave them empty if
-                    you do not need them.
-                </p>
-                <p>
-                    Documentation URL:
-                    <input
-                        type="text"
-                        placeholder="https://..."
-                        bind:value={extensionMetadata.docsURL}
-                        on:change={updateGeneratedCode}
-                    />
-                </p>
-                <p>
-                    Extension Icon:
-                    <input type="file" on:change={extensionIconAdded} />
-                </p>
-                {#if !extensionImageStates.icon.loading && !extensionImageStates.icon.failed && extensionImageStates.icon.image}
-                    <img
-                        alt="Extension Icon"
-                        title="Extension Icon"
-                        class="extensionIcon"
-                        src={extensionImageStates.icon.image}
-                    />
-                {/if}
-                {#if extensionImageStates.icon.image}
-                    {#if extensionImageStates.icon.failed}
-                        <p class="warning">
-                            The extension icon is not an image, this may appear
-                            broken in the category list.
-                        </p>
-                    {/if}
-                    {#if !extensionImageStates.icon.square}
-                        <p class="warning">
-                            The image is not square, this may appear broken in
-                            the category list.
-                        </p>
-                    {/if}
-                {/if}
-                <h3>Extra Icons</h3>
-                <p>
-                    Blocks can use their own icons instead of the Extension
-                    icon.
-                    <br />
-                    Add more images here to use them.
-                </p>
-                <StyledButton>Add Image</StyledButton>
-            </div>
             <div class="row-subsubmenus">
                 <div class="codeActionsWrapper">
-                    <p style="margin-right: 12px"><b>Extension Code</b></p>
+                    <p style="margin-right: 12px"><b>Assembly Code</b></p>
                     <StyledButton
                         on:click={() => {
                             // copy code
-                            const code =
-                                beautifyGeneratedCode(lastGeneratedCode);
-                            navigator.clipboard.writeText(code);
+                            navigator.clipboard.writeText(lastGeneratedCode);
                         }}
                     >
                         Copy
@@ -487,14 +259,12 @@
                     <div style="margin-right: 12px" />
                     <StyledButton
                         on:click={() => {
-                            // download
-                            const code =
-                                beautifyGeneratedCode(lastGeneratedCode);
+
                             const filteredProjectName = projectName.replace(
                                 /[^a-z0-9\-]+/gim,
                                 "_"
                             );
-                            const blob = new Blob([code], {
+                            const blob = new Blob([lastGeneratedCode], {
                                 type: "text/javascript;charset=UTF-8",
                             });
                             FileSaver.saveAs(blob, filteredProjectName + ".js");
@@ -505,7 +275,7 @@
                 </div>
                 <div class="codeWrapper">
                     <div class="codeDisplay">
-                        {@html displayGeneratedCode(lastGeneratedCode)}
+                        {@html lastGeneratedCode}
                     </div>
                 </div>
             </div>
@@ -517,40 +287,13 @@
     :root {
         --nav-height: 3rem;
     }
-    input[type="file"]::file-selector-button {
-        padding: 0.35rem 1.65rem;
 
-        font-size: 0.75rem;
-        color: black;
-        background: transparent;
-        cursor: pointer;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
-    }
-    input[type="file"]::file-selector-button:focus,
-    input[type="file"]::file-selector-button:hover,
-    input[type="file"]::file-selector-button:active {
-        background: white;
-    }
-
-    :global(body.dark) input[type="file"]::file-selector-button {
-        color: #ccc;
-        border-color: #c6c6c6;
-    }
-    :global(body.dark) input[type="file"]::file-selector-button:focus,
-    :global(body.dark) input[type="file"]::file-selector-button:hover,
-    :global(body.dark) input[type="file"]::file-selector-button:active {
-        background: #111;
-    }
-
-    :global(body.dark) input[type="text"],
-    :global(body.dark) input[type="number"] {
+    :global(body.dark) input[type="text"] {
         background: transparent;
         border: 1px solid rgba(255, 255, 255, 0.7);
         color: white;
     }
-    :global(body.dark) input[type="text"]:hover,
-    :global(body.dark) input[type="number"]:hover {
+    :global(body.dark) input[type="text"]:hover {
         background: transparent;
         border: 1px solid dodgerblue;
     }
@@ -601,21 +344,6 @@
         transition: 0.25s;
     }
 
-    .project-name[data-invalid="true"] {
-        background-color: #ffabab;
-        text-decoration: red underline;
-    }
-    :global(body.dark) .project-name[data-invalid="true"] {
-        background-color: #9b0000 !important;
-        text-decoration: red underline;
-    }
-
-    .extensionIcon {
-        width: 96px;
-        height: 96px;
-        object-fit: contain;
-    }
-
     .row-menus {
         display: flex;
         flex-direction: row;
@@ -639,69 +367,13 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 50%;
-    }
-
-    .extensionMenuPreview {
-        width: 60px;
-        cursor: pointer;
-        overflow: hidden;
-        color: #575e75;
-        user-select: none;
-    }
-    .extensionMenuPreview:hover {
-        color: #4c97ff !important;
-    }
-    .extensionMenuPreview:focus,
-    .extensionMenuPreview:active {
-        background-color: #e9eef2;
-    }
-    :global(body.dark) .extensionMenuPreview {
-        color: #ccc;
-    }
-    :global(body.dark) .extensionMenuPreview:focus,
-    :global(body.dark) .extensionMenuPreview:active {
-        background-color: #1e1e1e;
-    }
-    .extensionBubbleIcon {
-        width: 20px;
-        height: 20px;
-        background-size: 100%;
-        border-radius: 100%;
-        margin: 0 auto 0.125rem;
-        border: 1px rgba(0, 0, 0, 0.2) solid;
-    }
-    .extensionBubbleName {
-        font-size: 0.65rem;
-    }
-
-    .blockMenuButtons {
-        position: relative;
-        width: 100%;
-        height: 48px;
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-
-        background: #f9f9f9;
-    }
-    :global(body.dark) .blockMenuButtons {
-        background-color: #111;
+        height: 100%;
     }
 
     .blocklyWrapper {
         position: relative;
         width: 100%;
         height: calc(100% - 48px);
-    }
-    .assetsWrapper {
-        position: relative;
-        width: calc(100% - 16px);
-        height: calc(50% - 16px);
-        padding: 8px;
-        overflow: auto;
     }
     .codeActionsWrapper {
         position: relative;
@@ -721,7 +393,7 @@
     .codeWrapper {
         position: relative;
         width: 100%;
-        height: calc(100% - 48px);
+        height: 100%
     }
 
     .codeDisplay {
@@ -732,16 +404,12 @@
         padding: 0;
         overflow: auto;
 
-        background: #f9f9f9;
+        background: #f1f1f1;
         white-space: pre-wrap;
         font-family: monospace !important;
     }
     :global(body.dark) .codeDisplay {
-        background-color: #111;
+        background-color: #222;
     }
 
-    .warning {
-        background-color: yellow;
-        color: black;
-    }
 </style>

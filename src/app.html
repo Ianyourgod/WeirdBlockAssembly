@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<title>TurboBuilder - Make extensions with blocks</title>
+		<title>BlockAssembly - avoid coding in icky assembly</title>
     	<meta name="description" content="Create TurboWarp extensions using Scratch-like block coding." />
     	<meta name="keywords" content="turbowarp, extensions, blocks" />
     	<meta name="author" content="JeremyGamer13" />
@@ -140,7 +140,6 @@
 			};
 			const loadPrismStyle_ = (id) => {
 				const url = getPrismStyleUrl_(id);
-				console.log('grabbing prism style for', id);
 				return fetch(url);
 			};
 
@@ -150,7 +149,7 @@
 			const updateTheme = async () => {
 				// update body
 				const mode = localStorage.getItem('tb:theme');
-				if (mode === 'dark') {
+				if (mode === '') {
 					body.setAttribute("class", "dark");
 					body.style.background = "#111";
 				} else {
@@ -162,7 +161,7 @@
 				let promise;
 				let styleCode = '';
 				let styleId = 'dark';
-				if (mode === 'dark') {
+				if (mode === '') {
 					styleCode = prismStyles.dark;
 					if (!prismStyles.dark) promise = loadPrismStyle_('dark');
 				} else {

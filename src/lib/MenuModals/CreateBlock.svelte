@@ -126,7 +126,6 @@
     ModalScript.onopened = () => {
         // create block style
         Theme.blockStyles["core_makeablock_colors"] = getBlockStyle();
-        console.log(Theme);
         workspace.refreshTheme();
 
         visible = true;
@@ -143,7 +142,6 @@
         block.setEditable(false);
         block.setMovable(false);
         block.setDeletable(false);
-        console.log(block);
 
         // center
         workspace.centerOnBlock(block.id, true);

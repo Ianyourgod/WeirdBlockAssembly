@@ -13,7 +13,6 @@
     const dispatch = createEventDispatcher();
 
     function event() {
-        console.log(color3Included);
         if (!color3Included) {
             color3 = "";
         }

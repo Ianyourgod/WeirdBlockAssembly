@@ -29,7 +29,19 @@ function register() {
     }, (block) => {
         const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
         const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
-        const code = `if (${CONDITION ? `Boolean(${CONDITION})` : 'false'}) { ${BLOCKS} };`;
+        // register 7 will be the "return". The value will just be a pointer tho 
+        // condition is assumed to be a bool.
+        // aka if the value is not 0 it is true
+        // also im doing this like c so type is only known to the compiler
+        const code = [
+            CONDITION,
+            `ifEqReg r7 0 endif${window.ifCount}`,
+            BLOCKS,
+            `label endif${window.ifCount}`
+        ].join("\n");
+
+        window.ifCount++;
+
         return `${code}\n`;
     })
     // if <> then {} else {}
@@ -64,7 +76,19 @@ function register() {
         const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
         const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
         const BLOCKS2 = javascriptGenerator.statementToCode(block, 'BLOCKS2');
-        const code = `if (${CONDITION ? `Boolean(${CONDITION})` : 'false'}) { ${BLOCKS} } else { ${BLOCKS2} };`;
+        
+        const code = [
+            CONDITION,
+            `ifEqReg r7 0 else${window.ifCount}`,
+            BLOCKS,
+            `jump endif${window.ifCount}`,
+            `label else${window.ifCount}`,
+            BLOCKS2,
+            `label endif${window.ifCount}`
+        ].join("\n");
+
+        window.ifCount++;
+        
         return `${code}\n`;
     })
 }
