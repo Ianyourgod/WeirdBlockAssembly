@@ -18,7 +18,13 @@ class Compiler {
         window.ifCount = 0;
 
         const topCode = [
-            
+            "set r1 0",
+            "set r2 0",
+            "set r3 0",
+            "set r4 0",
+            "set r5 0",
+            "set r6 0",
+            "set r7 0",
         ].join("\n")
 
         return [
