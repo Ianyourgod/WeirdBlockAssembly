@@ -18,6 +18,9 @@ class Compiler {
         window.ifCount = 0;
 
         const topCode = [
+            "saveRam 0 0", 
+            // the free space pointer. I'm too lazy to implement a free function so
+            // if you run out you're fucked
             "set r1 0",
             "set r2 0",
             "set r3 0",

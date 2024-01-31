@@ -48,10 +48,13 @@
     import registerGeneric from "../resources/blocks/generic.js";
     registerGeneric();
 
+    import registerRuntime from "../resources/blocks/runtime.js";
     import registerCore from "../resources/blocks/core.js";
     import registerControl from "../resources/blocks/control.js";
+    
     registerCore();
     registerControl();
+    registerRuntime();
 
     const en = {
         rtl: false,
@@ -217,12 +220,6 @@
 
 </script>
 
-<CreateBlockModal
-    color1={extensionMetadata.color1}
-    color2={extensionMetadata.color2}
-    color3={extensionMetadata.color3}
-/>
-
 <NavigationBar>
     <NavigationButton>File</NavigationButton>
     <NavigationButton>Edit</NavigationButton>
@@ -231,7 +228,7 @@
     <input
         class="project-name"
         type="text"
-        placeholder="Extension Name (ex: Extension)"
+        placeholder="Project Name (ex: bubble sort)"
         style="margin-left:4px;margin-right:4px"
         bind:value={projectName}
         on:change={updateGeneratedCode}

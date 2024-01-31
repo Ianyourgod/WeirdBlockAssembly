@@ -1,6 +1,16 @@
 <xml>
+    <category name="Runtime" colour="#FF7B39">
+        <block type="runtime_onstart" />
+        <block type="runtime_return" />
+    </category>
+
     <category name="Control" colour="#FFAB19">
         <block type="control_ifthen" />
         <block type="control_ifthenelse" />
+    </category>
+
+    <category name="Literals" colour="#5E3">
+        <block type="generic_number" />
+        <block type="generic_boolean" />
     </category>
 </xml>
