@@ -15,11 +15,14 @@ class Compiler {
     compile(workspace) {
         const code = "\n".concat(javascriptGenerator.workspaceToCode(workspace));
 
+        const VAR_START = 100000;
+
         window.ifCount = 1;
+        window.memPointer = 0 + VAR_START;
         window.vars = {};
 
         const topCode = [
-            "saveRam 0 0", 
+            "saveRam 1 0", 
             // the free space pointer. I'm too lazy to implement a free function so
             // if you run out you're fucked
             "set 0 r0",

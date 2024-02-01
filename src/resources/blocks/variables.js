@@ -6,11 +6,11 @@ const categoryColor = '#FF8C1A';
 
 function register() {
     // define variable
-    registerBlock(`${categoryPrefix}define`, {
+    registerBlock(`${categoryPrefix}declare`, {
         message0: 'define int %1',
         args0: [
             {
-                "type": "input_value",
+                "type": "field_input",
                 "name": "NAME",
                 "checks": "String"
             }
@@ -20,18 +20,13 @@ function register() {
         inputsInline: true,
         colour: categoryColor
     }, (block) => {
-        const NAME = javascriptGenerator.valueToCode(block, 'NAME', javascriptGenerator.ORDER_ATOMIC);
-        const code = [
-            "loadRam 0 r7", // load free space pointer into r7
-            "saveRamReg_ 0 r7", // save 0 into ram as a placeholder
-            "copy r7 r6", // copy r7 into r6
-            "add r6 1", // add 1 to r6 (size of int)
-            "saveRamReg r6 0" // save r6 into ram
-        ].join("\n");
+        const NAME = block.getFieldValue('NAME');
 
-        
+        window.vars[NAME] = window.memPointer;
+        window.memPointer++;
 
-        return `${code}\n`;
+        // define doesnt *actually* do anything, but it 'allocates' a space in memory
+        return ``;
     })
 
     // set variable
@@ -39,7 +34,7 @@ function register() {
         message0: 'set %1 to %2',
         args0: [
             {
-                "type": "input_value",
+                "type": "field_input",
                 "name": "NAME",
                 "checks": "String"
             },
@@ -53,10 +48,16 @@ function register() {
         inputsInline: true,
         colour: categoryColor
     }, (block) => {
-        const NAME = javascriptGenerator.valueToCode(block, 'NAME', javascriptGenerator.ORDER_ATOMIC);
+        const NAME = block.getFieldValue('NAME');
         const VAR = javascriptGenerator.valueToCode(block, 'VAR', javascriptGenerator.ORDER_ATOMIC);
-        const code = `variables[${NAME || '""'}] = ${VAR || '""'}`;
-        return `${code}\n`;
+        
+        const code = [
+            `${VAR}`, // get the value (rember this returns a pointer)
+            `loadRamReg r7 r7`, // load the value from the pointer into r7
+            `saveRamReg r7 ${window.vars[NAME]}\n` // save the value into the variable
+        ].join("\n");
+
+        return code;
     })
 
     // get variable
@@ -64,7 +65,7 @@ function register() {
         message0: 'get %1',
         args0: [
             {
-                "type": "input_value",
+                "type": "field_input",
                 "name": "NAME",
                 "checks": "String"
             }
@@ -73,8 +74,9 @@ function register() {
         inputsInline: true,
         colour: categoryColor
     }, (block) => {
-        const NAME = javascriptGenerator.valueToCode(block, 'NAME', javascriptGenerator.ORDER_ATOMIC);
-        return [`variables[${NAME || '""'}]`, javascriptGenerator.ORDER_ATOMIC];
+        const NAME = block.getFieldValue('NAME');
+
+        return [`loadRam ${window.vars[NAME]} r7\n`, javascriptGenerator.ORDER_ATOMIC]
     })
 }
 

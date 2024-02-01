@@ -10,6 +10,7 @@
     </category>
 
     <category name="Variables" colour="#FF7B39">
+        <block type="variable_declare" />
         <block type="variable_set" />
         <block type="variable_get" />
     </category>

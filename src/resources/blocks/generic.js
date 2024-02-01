@@ -25,7 +25,7 @@ function register() {
             "loadRam 0 r7", // load free space pointer into r7
             `saveRamReg_ ${Math.floor(NUMBER)} r7`, // save val into ram and make SURE its a number by converting to int
             "copy r7 r6", // copy r7 into r6
-            "add r6 1", // add 1 to r6 (size of int)
+            "addReg r6 1 r6", // add 1 to r6 (size of int)
             "saveRamReg r6 0" // save r6 into ram
         ].join("\n");
         return [code, javascriptGenerator.ORDER_ATOMIC];
@@ -76,7 +76,7 @@ function register() {
             "loadRam 0 r7", // load free space pointer into r7
             `saveRamReg_ ${val} r7`, // save val into ram
             "copy r7 r6", // copy r7 into r6
-            "add r6 1", // add 1 to r6 (size of bool)
+            "addReg r6 1 r6", // add 1 to r6 (size of bool)
             "saveRamReg r6 0", // save r6 into ram
         ].join("\n");
         return [code, javascriptGenerator.ORDER_ATOMIC];

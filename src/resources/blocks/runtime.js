@@ -22,7 +22,7 @@ function register() {
     }, (block) => {
         const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
 
-        return `label func_start\n${BLOCKS}\n${BLOCKS.includes("\nreturn\n") ? "" : "return\n"}`;
+        return `label func_start\n${BLOCKS}\n${BLOCKS.includes("return\n") ? "" : "return\n"}`;
     })
 
     registerBlock(`${categoryPrefix}return`, {
@@ -39,6 +39,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const VALUE = javascriptGenerator.valueToCode(block, 'VALUE', javascriptGenerator.ORDER_ATOMIC);
+
 
         return `${VALUE}\nreturn\n`;
     });
