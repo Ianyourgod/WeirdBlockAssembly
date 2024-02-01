@@ -36,6 +36,7 @@ class Compiler {
         
             
             "call func_start",
+            "loadRamReg r7 r7",
             "ifEqReg r7 0 else0",
             "  exit_error",
             "label else0",

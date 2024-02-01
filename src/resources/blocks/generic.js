@@ -31,10 +31,8 @@ function register() {
         return [code, javascriptGenerator.ORDER_ATOMIC];
     })
     
-    /*
-    temp disable bc im too lazy to implement text
     // text
-    registerBlock(`${categoryPrefix}text`, {
+    registerBlock(`${categoryPrefix}string`, {
         // gets mad at "empty" string (no just text)
         message0: 'text%1',
         args0: [
@@ -49,10 +47,23 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const TEXT = block.getFieldValue('TEXT');
-        const code = `String(${JSON.stringify(TEXT)})`;
-        return [code, javascriptGenerator.ORDER_NONE];
+
+        const code = [
+            `loadRam 0 r7`, // load free space pointer into r7
+            `saveRam ${TEXT.length} r7`, // save length into ram
+            `copy r7 r6`, // copy r7 into r6
+            `addReg r6 ${TEXT.length+1} r6`, // add length+1 to r6 (size of string)
+            `saveRamReg r6 0`, // save r6 into ram
+            `subReg r6 ${TEXT.length+1} r6`, // subtract length+1 from r6
+        ]
+
+        for (const char of TEXT) {
+            code.push(`saveRamReg_ "${char}" r6`);
+            code.push(`addReg r6 1 r6`)
+        }
+
+        return [code.join("\n"), javascriptGenerator.ORDER_ATOMIC];
     })
-    */
 
     // boolean
     registerBlock(`${categoryPrefix}boolean`, {
