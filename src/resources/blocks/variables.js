@@ -81,8 +81,7 @@ function register() {
         const LENGTH = block.getFieldValue('LENGTH');
 
         window.vars[NAME] = {
-            pointer: window.memPointer,
-            length: LENGTH
+            pointer: window.memPointer
         }
         window.memPointer += LENGTH+1;
 

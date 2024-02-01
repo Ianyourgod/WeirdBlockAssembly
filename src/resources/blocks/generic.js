@@ -54,7 +54,7 @@ function register() {
             `copy r7 r6`, // copy r7 into r6
             `addReg r6 ${TEXT.length+1} r6`, // add length+1 to r6 (size of string)
             `saveRamReg r6 0`, // save r6 into ram
-            `subReg r6 ${TEXT.length+1} r6`, // subtract length+1 from r6
+            `subReg r6 ${TEXT.length} r6`, // subtract length from r6
         ]
 
         for (const char of TEXT) {
