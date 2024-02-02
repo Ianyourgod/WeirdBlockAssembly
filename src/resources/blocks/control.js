@@ -35,12 +35,15 @@ function register() {
         // also im doing this like c so type is only known to the compiler
         const code = [
             CONDITION,
-            `ifEqReg r7 0 if_endif${window.ifCount}`,
+            `pop r7`, // assume the condition is a bool
+            // this means that any non empty string is also true.
+            // cool!!!
+            `ifEqReg r7 0 if_endif${window.labelCount}`,
             BLOCKS,
-            `label if_endif${window.ifCount}`
+            `label if_endif${window.labelCount}`
         ].join("\n");
 
-        window.ifCount++;
+        window.labelCount++;
 
         return `${code}\n`;
     })
@@ -79,15 +82,16 @@ function register() {
         
         const code = [
             CONDITION,
-            `ifEqReg r7 0 if_else${window.ifCount}`,
+            `pop r7`, // assume the condition is a bool
+            `ifEqReg r7 0 if_else${window.labelCount}`,
             BLOCKS,
-            `jump if_endif${window.ifCount}`,
-            `label if_else${window.ifCount}`,
+            `jump if_endif${window.labelCount}`,
+            `label if_else${window.labelCount}`,
             BLOCKS2,
-            `label if_endif${window.ifCount}`
+            `label if_endif${window.labelCount}`
         ].join("\n");
 
-        window.ifCount++;
+        window.labelCount++;
         
         return `${code}\n`;
     })

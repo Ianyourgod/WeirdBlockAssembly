@@ -17,7 +17,7 @@
         <block type="variable_get" />
     </category>
 
-    <category name="Literals" colour="#5E3">
+    <category name="Literals" colour="#5CA4FF">
         <block type="generic_number" />
         <block type="generic_boolean" />
         <block type="generic_string" />

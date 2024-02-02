@@ -24,12 +24,13 @@ function register() {
         const NAME = block.getFieldValue('NAME');
 
         window.vars[NAME] = {
-            pointer: window.memPointer
+            pointer: window.memPointer,
+            type: "int"
         }
         window.memPointer++;
 
         // define doesnt *actually* do anything, but it 'allocates' a space in memory
-        return ``;
+        return "";
     });
 
     registerBlock(`${categoryPrefix}declare_bool`, {
@@ -49,12 +50,13 @@ function register() {
         const NAME = block.getFieldValue('NAME');
 
         window.vars[NAME] = {
-            pointer: window.memPointer
+            pointer: window.memPointer,
+            type: "bool"
         }
         window.memPointer++;
 
         // define doesnt *actually* do anything, but it 'allocates' a space in memory
-        return ``;
+        return "";
     });
 
     registerBlock(`${categoryPrefix}declare_string`, {
@@ -81,9 +83,10 @@ function register() {
         const LENGTH = block.getFieldValue('LENGTH');
 
         window.vars[NAME] = {
-            pointer: window.memPointer
+            pointer: window.memPointer,
+            type: "string"
         }
-        window.memPointer += LENGTH+1;
+        window.memPointer += LENGTH;
 
         // define doesnt *actually* do anything, but it 'allocates' a space in memory
         return "";
@@ -111,12 +114,31 @@ function register() {
         const NAME = block.getFieldValue('NAME');
         const VAR = javascriptGenerator.valueToCode(block, 'VAR', javascriptGenerator.ORDER_ATOMIC);
         
-        const code = [
-            `${VAR}`, // get the value (rember this returns a pointer)
-            `saveRamReg r7 ${window.vars[NAME].pointer}\n` // save the pointer into the variable
-        ].join("\n");
+        const code = [VAR];
 
-        return code;
+        switch (window.vars[NAME].type) {
+            case "int":
+                code.push("pop r7");
+                code.push(`saveRamReg r7 ${window.vars[NAME].pointer}`);
+                break;
+            case "bool":
+                code.push("pop r7");
+                code.push(`saveRamReg r7 ${window.vars[NAME].pointer}`);
+                break;
+            case "string":
+                code.push([
+                    `set ${window.vars[NAME].pointer} r5`, // counter
+                    `label vars_set_string${window.labelCount}`,
+                    "pop r7",
+                    `saveRamRegs r7 r5`,
+                    "addReg r5 1 r5",
+                    `ifNEqReg r7 0 vars_set_string${window.labelCount}`,
+                ].join("\n"));
+                window.labelCount++;
+                break;
+        }
+
+        return `${code.join("\n")}\n`;
     })
 
     // get variable
@@ -135,7 +157,36 @@ function register() {
     }, (block) => {
         const NAME = block.getFieldValue('NAME');
 
-        return [`loadRam ${window.vars[NAME].pointer} r7\n`, javascriptGenerator.ORDER_ATOMIC]
+        const code = [];
+
+        switch (window.vars[NAME].type) {
+            case "int":
+                code.push(`loadRam ${window.vars[NAME].pointer} r7`);
+                code.push("pushReg r7");
+                break;
+            case "bool":
+                code.push(`loadRam ${window.vars[NAME].pointer} r7`);
+                code.push("pushReg r7");
+                break;
+            case "string":
+                code.push([
+                    `set ${window.vars[NAME].pointer} r5`, // counter
+                    `label vars_get_string${window.labelCount}`, // count up till your at the end of the string
+                    `loadRamReg r5 r7`,
+                    "addReg r5 1 r5",
+                    `ifNEqReg r7 0 vars_get_string${window.labelCount}`,
+                    'subReg r5 1 r5', // go back to the null terminator
+                    `label vars_get_string${window.labelCount+1}`, // count down while pushing the string
+                    `loadRamReg r5 r7`,
+                    "pushReg r7",
+                    "subReg r5 1 r5",
+                    `ifGrEqReg r5 ${window.vars[NAME].pointer} vars_get_string${window.labelCount+1}`
+                ].join("\n"));
+                window.labelCount += 2;
+                break;
+        }
+
+        return [`${code.join("\n")}\n`, javascriptGenerator.ORDER_ATOMIC];
     })
 }
 

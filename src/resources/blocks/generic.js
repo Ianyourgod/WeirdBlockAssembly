@@ -21,13 +21,9 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const NUMBER = block.getFieldValue('NUMBER');
-        const code = [
-            "loadRam 0 r7", // load free space pointer into r7
-            `saveRamReg_ ${Math.floor(NUMBER)} r7`, // save val into ram and make SURE its a number by converting to int
-            "copy r7 r6", // copy r7 into r6
-            "addReg r6 1 r6", // add 1 to r6 (size of int)
-            "saveRamReg r6 0" // save r6 into ram
-        ].join("\n");
+        
+        const code = `push ${NUMBER}`
+
         return [code, javascriptGenerator.ORDER_ATOMIC];
     })
     
@@ -48,18 +44,14 @@ function register() {
     }, (block) => {
         const TEXT = block.getFieldValue('TEXT');
 
-        const code = [
-            `loadRam 0 r7`, // load free space pointer into r7
-            `saveRam ${TEXT.length} r7`, // save length into ram
-            `copy r7 r6`, // copy r7 into r6
-            `addReg r6 ${TEXT.length+1} r6`, // add length+1 to r6 (size of string)
-            `saveRamReg r6 0`, // save r6 into ram
-            `subReg r6 ${TEXT.length} r6`, // subtract length from r6
-        ]
+        const code = []
 
-        for (const char of TEXT) {
-            code.push(`saveRamReg_ "${char}" r6`);
-            code.push(`addReg r6 1 r6`)
+        code.push(`push 0`) // null terminator
+
+        const reveresed = TEXT.split("").reverse().join("");
+
+        for (const char of reveresed) {
+            code.push(`push "${char}"`)
         }
 
         return [code.join("\n"), javascriptGenerator.ORDER_ATOMIC];
@@ -83,13 +75,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const val = block.getFieldValue('STATE');
-        const code = [
-            "loadRam 0 r7", // load free space pointer into r7
-            `saveRamReg_ ${val} r7`, // save val into ram
-            "copy r7 r6", // copy r7 into r6
-            "addReg r6 1 r6", // add 1 to r6 (size of bool)
-            "saveRamReg r6 0", // save r6 into ram
-        ].join("\n");
+        const code = `push ${val}`
         return [code, javascriptGenerator.ORDER_ATOMIC];
     })
 }
