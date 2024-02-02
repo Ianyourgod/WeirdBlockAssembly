@@ -6,9 +6,11 @@
     import NavigationDivider from "$lib/NavigationBar/Divider.svelte";
     import NavigationButton from "$lib/NavigationBar/Button.svelte";
     import StyledButton from "$lib/StyledComponents/ToolboxButton.svelte";
+    import Modal from '$lib/StyledComponents/Modal.svelte';
 
     // Toolbox
-    import Toolbox from "$lib/Toolbox/Toolbox.xml?raw";
+    import TB from "$lib/Toolbox/Toolbox.xml?raw";
+    let Toolbox = TB;
 
     import JSZip from "jszip";
     import * as FileSaver from "file-saver";
@@ -47,12 +49,20 @@
     registerRuntime();
     registerVariables();
 
+    // temp until extensions are actually working
+    import stdio from "../resources/extensions/stdio.js";
+    let stdioObj = new stdio;
+    stdioObj.registerBlocks();
+
     const en = {
         rtl: false,
         msg: {
             ...En,
         },
     };
+
+    let showExtensionModal = false;
+    let dialog;
 
     const config = {
         toolbox: Toolbox,
@@ -109,7 +119,40 @@
     }
 
     function extensionMenu() {
-        console.log("extension menu");
+        showExtensionModal = true;
+    }
+
+    // this isnt working
+    // dont use it
+    async function addExtension(extension) {
+        let target = extension.target;
+        let name = Array.from(target.classList).includes("extension") ?
+            target.attributes :
+            target.parentNode.attributes;
+        name = name.getNamedItem("extname").nodeValue;
+
+        /* @vite-ignore */
+        let ext = new (await import(`../resources/extensions/${name}.js`)).default;
+
+        let category = ext.getCategory();
+
+        let categoryXML = `<category name="${category.name}" colour="${category.color}">`;
+        categoryXML += category.blocks.map((block) => {
+            return `<block type="${block}"></block>`;
+        }).join("");
+
+        categoryXML += "</category>";
+
+        let part1 = Toolbox.slice(0, -7)
+
+        Toolbox = part1.concat(categoryXML, "</xml>")
+
+        ext.registerBlocks();
+
+        config.toolbox = Toolbox
+
+        showExtensionModal = false;
+        dialog.close();
     }
 
     onMount(() => {
@@ -229,16 +272,19 @@
         bind:value={projectName}
         on:change={updateGeneratedCode}
     />
+    <!--
+        isnt working
+        dont uncomment
+    <StyledButton on:click={extensionMenu}>
+        <img src="/images/extensions.svg" alt="extensions"/>
+    </StyledButton>
+    -->
 </NavigationBar>
 <div class="main">
     <div class="row-menus">
         <div class="row-first-submenus">
             <div class="blocklyWrapper">
-                <BlocklyComponent {config} locale={en} bind:workspace>
-                    <StyledButton on:click={extensionMenu}>
-                        <img src="/images/extensions.svg" alt="extensions"/>
-                    </StyledButton>
-                </BlocklyComponent>
+                <BlocklyComponent {config} locale={en} bind:workspace />
             </div>
         </div>
         <div class="row-submenus">
@@ -278,6 +324,20 @@
             </div>
         </div>
     </div>
+
+    <Modal bind:showModal={showExtensionModal} bind:dialog={dialog} >
+        <h2 slot="header">
+            Extensions
+        </h2>
+
+        <div class="extension-list">
+
+            <div class="extension" extname="stdio" on:click={addExtension} on:keydown={() => {}} role="button" tabindex="0">
+                <h3>stdio</h3>
+                <p>access standard input/output</p>
+            </div>
+        </div>
+    </Modal>    
 </div>
 
 <style>
@@ -407,6 +467,18 @@
     }
     :global(body.dark) .codeDisplay {
         background-color: #222;
+    }
+
+    .extension-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .extension {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background: #f1f1f1;
     }
 
 </style>

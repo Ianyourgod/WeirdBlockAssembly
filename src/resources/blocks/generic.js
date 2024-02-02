@@ -21,7 +21,7 @@ function register() {
         colour: categoryColor
     }, (block) => {
         const NUMBER = block.getFieldValue('NUMBER');
-        
+
         const code = `push ${NUMBER}`
 
         return [code, javascriptGenerator.ORDER_ATOMIC];
@@ -51,7 +51,7 @@ function register() {
         const reveresed = TEXT.split("").reverse().join("");
 
         for (const char of reveresed) {
-            code.push(`push "${char}"`)
+            code.push(`push ${char.charCodeAt(0)}`)
         }
 
         return [code.join("\n"), javascriptGenerator.ORDER_ATOMIC];
