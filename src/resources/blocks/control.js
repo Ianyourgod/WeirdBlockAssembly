@@ -35,9 +35,9 @@ function register() {
         // also im doing this like c so type is only known to the compiler
         const code = [
             CONDITION,
-            `ifEqReg r7 0 endif${window.ifCount}`,
+            `ifEqReg r7 0 if_endif${window.ifCount}`,
             BLOCKS,
-            `label endif${window.ifCount}`
+            `label if_endif${window.ifCount}`
         ].join("\n");
 
         window.ifCount++;
@@ -79,12 +79,12 @@ function register() {
         
         const code = [
             CONDITION,
-            `ifEqReg r7 0 else${window.ifCount}`,
+            `ifEqReg r7 0 if_else${window.ifCount}`,
             BLOCKS,
-            `jump endif${window.ifCount}`,
-            `label else${window.ifCount}`,
+            `jump if_endif${window.ifCount}`,
+            `label if_else${window.ifCount}`,
             BLOCKS2,
-            `label endif${window.ifCount}`
+            `label if_endif${window.ifCount}`
         ].join("\n");
 
         window.ifCount++;

@@ -7,19 +7,10 @@
     import NavigationButton from "$lib/NavigationBar/Button.svelte";
     import StyledButton from "$lib/StyledComponents/ToolboxButton.svelte";
 
-    // Modals
-    import ExtensionColorsModal from "$lib/MenuModals/ExtensionColors.svelte";
-    import CreateBlockModal from "$lib/MenuModals/CreateBlock.svelte";
-
-    // Modal Scripts
-    import CreateBlockModalScript from "$lib/MenuModals/createblock.js";
-
     // Toolbox
     import Toolbox from "$lib/Toolbox/Toolbox.xml?raw";
 
     import JSZip from "jszip";
-    import beautify from "js-beautify";
-    import Prism from "prismjs";
     import * as FileSaver from "file-saver";
     import fileDialog from "../resources/fileDialog";
     import EventManager from "../resources/events";
@@ -116,6 +107,11 @@
         );
         lastGeneratedCode = code;
     }
+
+    function extensionMenu() {
+        console.log("extension menu");
+    }
+
     onMount(() => {
         console.log("ignore the warnings above we dont care about those");
 
@@ -238,7 +234,11 @@
     <div class="row-menus">
         <div class="row-first-submenus">
             <div class="blocklyWrapper">
-                <BlocklyComponent {config} locale={en} bind:workspace />
+                <BlocklyComponent {config} locale={en} bind:workspace>
+                    <StyledButton on:click={extensionMenu}>
+                        <img src="/images/extensions.svg" alt="extensions"/>
+                    </StyledButton>
+                </BlocklyComponent>
             </div>
         </div>
         <div class="row-submenus">

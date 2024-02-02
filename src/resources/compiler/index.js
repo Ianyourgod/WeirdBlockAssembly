@@ -37,9 +37,9 @@ class Compiler {
             
             "call func_start",
             "loadRamReg r7 r7",
-            "ifEqReg r7 0 else0",
+            "ifEqReg r7 0 if_else0",
             "  exit_error",
-            "label else0",
+            "label if_else0",
             "  exit_clean",
         ].join("\n")
 

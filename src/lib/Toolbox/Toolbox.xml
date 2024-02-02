@@ -22,4 +22,9 @@
         <block type="generic_boolean" />
         <block type="generic_string" />
     </category>
+    <!--
+    <category name="stdio" colour="1DE">
+        <block type="stdio_printf" />
+    </category>
+    -->
 </xml>

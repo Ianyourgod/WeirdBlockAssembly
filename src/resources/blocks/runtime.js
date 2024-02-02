@@ -5,7 +5,7 @@ const categoryPrefix = 'runtime_';
 const categoryColor = '#FFBF00';
 
 function register() {
-    // setInterval
+    // on start
     registerBlock(`${categoryPrefix}onstart`, {
         message0: 'On start %1 %2',
         args0: [
