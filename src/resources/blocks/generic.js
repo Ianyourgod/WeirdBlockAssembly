@@ -48,11 +48,32 @@ function register() {
 
         code.push(`push 0`) // null terminator
 
-        const reveresed = TEXT.split("").reverse().join("");
+        const reveresed = TEXT.split("").reverse()
 
-        for (const char of reveresed) {
-            code.push(`push ${char.charCodeAt(0)}`)
+        const parsed = ""
+
+        for (let i = 0; i < reveresed.length; i++) {
+            if (reveresed[i] === "\\") {
+                i++
+                switch (reveresed[i]) {
+                    case "n":
+                        code.push(`push 10`)
+                        break;
+                    case "t":
+                        code.push(`push 9`)
+                        break;
+                    case "\\":
+                        code.push(`push 92`)
+                        break;
+                    default:
+                        code.push(`push ${reveresed[i].charCodeAt(0)}`)
+                        break;
+                }
+            } else {
+                code.push(`push ${reveresed[i].charCodeAt(0)}`)
+            }
         }
+
 
         return [code.join("\n"), javascriptGenerator.ORDER_ATOMIC];
     })

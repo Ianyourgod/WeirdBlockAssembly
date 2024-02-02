@@ -49,7 +49,7 @@ class Compiler {
             "  exit_clean",
         ].join("\n")
 
-        const func_code = functions(window);
+        const func_code = functions();
 
 
         return [

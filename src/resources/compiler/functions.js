@@ -1,23 +1,20 @@
-function functions(window) {
+function functions() {
     return [
         "label stdio_func_printf",
             "loadRamReg 0 r5", // load console index
-            `label stdio_printf${window.labelCount}`,
-            "pop r7", // get the char
-            `ifNEqReg r7 92 stdio_printf${window.labelCount}_newline`, // check for newline
-            "pop r6", // get the char
-            `ifNEqReg r6 110 stdio_printf${window.labelCount}_backslash`, // check for newline
-            "modReg r5 80 r4",
-            "addReg r5 80 r5",
-            "subRegs r5 r4 r5",
-            "pop r7",
-            `jump stdio_printf${window.labelCount}_newline`,
-            `label stdio_printf${window.labelCount}_backslash`,
-            "pushReg r6",
-            `label stdio_printf${window.labelCount}_newline`,
-            `saveCnslRegs r7 r5`,
-            "addReg r5 1 r5",
-            `ifNEqReg r7 0 stdio_printf${window.labelCount}`,
+            "label stdio_printf", // start of loop
+                "pop r7", // get the char
+                "ifNEqReg r7 10 stdio_printf_newline", // check for newline
+                    "modReg r5 80 r4", // get the remainder
+                    "addReg r5 80 r5", // add 80
+                    "subRegs r5 r4 r5", // subtract the remainder
+                    "pop r7", // get the char after the newline
+                    "jump stdio_printf_endspecial", // go past the rest
+                "label stdio_printf_newline",
+                "label stdio_printf_endspecial",
+                "saveCnslRegs r7 r5", // write the char to the console
+                "addReg r5 1 r5", // increment the console index
+            "ifNEqReg r7 0 stdio_printf", // loop
         "push 0",
         "return",
     ].join("\n");
