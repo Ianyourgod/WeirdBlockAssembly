@@ -49,7 +49,10 @@ function register() {
         for (let i = 0; i < TEXT.length; i++) {
             if (TEXT[i] === "\\") {
                 i++
-                console.log(TEXT[i])
+                if (!TEXT[i]) {
+                    parsed.push(92)
+                    break;
+                }
                 switch (TEXT[i]) {
                     case "n":
                         parsed.push(10)
