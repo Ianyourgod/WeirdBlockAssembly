@@ -1,7 +1,3 @@
-// compile functions
-import raw_randomNumberGen from './randomNumberGen.js?raw';
-import raw_compileVarSection from './compileVarSection.js?raw';
-
 import javascriptGenerator from '../javascriptGenerator';
 import functions from './functions';
 
