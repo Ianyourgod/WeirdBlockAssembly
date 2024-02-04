@@ -177,6 +177,25 @@ function register() {
 
         return [`${code.join("\n")}\n`, javascriptGenerator.ORDER_ATOMIC];
     })
+
+    // get pointer
+    registerBlock(`${categoryPrefix}get_pointer`, {
+        message0: 'get pointer of %1',
+        args0: [
+            {
+                "type": "field_input",
+                "name": "NAME",
+                "checks": "String"
+            }
+        ],
+        output: "Number",
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const NAME = block.getFieldValue('NAME');
+
+        return [`push ${window.vars[NAME].pointer}`, javascriptGenerator.ORDER_ATOMIC];
+    })
 }
 
 export default register;
