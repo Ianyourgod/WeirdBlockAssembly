@@ -22,6 +22,14 @@ function functions() {
             "ifNEqReg r7 0 stdio_printf", // loop
         "push 0",
         "return",
+
+        "label stdio_func_scanf",
+            // idea here is we let the user type stuff in, print it out, then give it to the program when enter is pressed
+            
+            "eventWaiting r0", // check if an event is waiting
+            "ifEqReg r0 0 stdio_func_scanf", // loop
+            "readKey r0", // get the key
+            
     ].join("\n");
 }
 

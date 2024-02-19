@@ -51,7 +51,7 @@
 
     // temp until extensions are actually working
     import stdio from "../resources/extensions/stdio.js";
-    let stdioObj = new stdio;
+    let stdioObj = new stdio();
     stdioObj.registerBlocks();
 
     const en = {
