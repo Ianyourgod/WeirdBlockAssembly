@@ -13,7 +13,7 @@ class Compiler {
         const code = "\n".concat(javascriptGenerator.workspaceToCode(workspace));
 
         const VAR_START = 1;
-
+        
         window.labelCount = 1;
         window.memPointer = 0 + VAR_START;
         window.vars = {

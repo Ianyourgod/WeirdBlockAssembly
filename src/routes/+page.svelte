@@ -44,10 +44,12 @@
     import registerRuntime from "../resources/blocks/runtime.js";
     import registerControl from "../resources/blocks/control.js";
     import registerVariables from "../resources/blocks/variables.js";
+    import registerOperators from "../resources/blocks/operators.js";
     
     registerControl();
     registerRuntime();
     registerVariables();
+    registerOperators();
 
     // temp until extensions are actually working
     import stdio from "../resources/extensions/stdio.js";

@@ -9,21 +9,27 @@
         <block type="control_ifthenelse" />
     </category>
 
+    <category name="Literals" colour="#5CA4FF">
+        <block type="generic_number" />
+        <block type="generic_boolean" />
+        <block type="generic_string" />
+    </category>
+
+    <category name="Operators" colour="#3fce29">
+        <block type="operators_2sideints" />
+    </category>
+
     <category name="Variables" colour="#FF7B39">
         <block type="variable_declare_int" />
         <block type="variable_declare_bool" />
         <block type="variable_declare_string" />
         <block type="variable_set" />
         <block type="variable_get" />
-    </category>
-
-    <category name="Literals" colour="#5CA4FF">
-        <block type="generic_number" />
-        <block type="generic_boolean" />
-        <block type="generic_string" />
+        <block type="variable_get_pointer" />
     </category>
     
     <category name="stdio" colour="1DE">
         <block type="stdio_printf" />
+        <block type="stdio_scanfint" />
     </category>
 </xml>

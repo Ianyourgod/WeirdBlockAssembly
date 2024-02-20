@@ -33,11 +33,29 @@ class Category {
             
             const code = [VAR];
     
-            code.push([
-                "call stdio_func_printf",
-            ].join("\n"))
+            code.push("call stdio_func_printf\npop r4");
+    
+            return `${code.join("\n")}\n`;
+        });
 
-            window.labelCount++;
+        registerBlock(`${categoryPrefix}scanfint`, {
+            message0: 'scanf int into %1',
+            args0: [
+                {
+                    "type": "input_value",
+                    "name": "VAR"
+                }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            inputsInline: true,
+            colour: categoryColor
+        }, (block) => {
+            const VAR = javascriptGenerator.valueToCode(block, 'VAR', javascriptGenerator.ORDER_ATOMIC);
+    
+            const code = [VAR];
+
+            code.push("call stdio_func_scanf_int\npop r4");
     
             return `${code.join("\n")}\n`;
         });
