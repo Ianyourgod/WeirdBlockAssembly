@@ -7,6 +7,7 @@
     <category name="Control" colour="#FFAB19">
         <block type="control_ifthen" />
         <block type="control_ifthenelse" />
+        <block type="control_while" />
     </category>
 
     <category name="Literals" colour="#5CA4FF">
@@ -17,6 +18,9 @@
 
     <category name="Operators" colour="#3fce29">
         <block type="operators_2sideints" />
+        <block type="operators_2sidebools" />
+        <block type="operators_intToString" />
+        <block type="operators_joinStrings" />
     </category>
 
     <category name="Variables" colour="#FF7B39">

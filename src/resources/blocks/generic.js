@@ -84,7 +84,7 @@ function register() {
 
 
         return [code.join("\n"), javascriptGenerator.ORDER_ATOMIC];
-    })
+    });
 
     // boolean
     registerBlock(`${categoryPrefix}boolean`, {
@@ -106,7 +106,7 @@ function register() {
         const val = block.getFieldValue('STATE');
         const code = `push ${val}`
         return [code, javascriptGenerator.ORDER_ATOMIC];
-    })
+    });
 }
 
 export default register;

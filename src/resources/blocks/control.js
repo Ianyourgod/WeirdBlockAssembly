@@ -94,7 +94,44 @@ function register() {
         window.labelCount++;
         
         return `${code}\n`;
-    })
+    });
+
+    // while <>
+    registerBlock(`${categoryPrefix}while`, {
+        message0: 'while %1 %2',
+        args0: [
+            {
+                "type": "input_value",
+                "name": "CONDITION",
+                "check": "Boolean"
+            },
+            {
+                "type": "input_statement",
+                "name": "BLOCKS"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        inputsInline: true,
+        colour: categoryColor
+    }, (block) => {
+        const CONDITION = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_ATOMIC);
+        const BLOCKS = javascriptGenerator.statementToCode(block, 'BLOCKS');
+        
+        const code = [
+            `label while_start${window.labelCount}`,
+            CONDITION,
+            `pop r7`, // assume the condition is a bool
+            `ifEqReg r7 0 while_end${window.labelCount}`,
+            BLOCKS,
+            `jump while_start${window.labelCount}`,
+            `label while_end${window.labelCount}`
+        ].join("\n");
+
+        window.labelCount++;
+        
+        return `${code}\n`;
+    });
 }
 
 export default register;
