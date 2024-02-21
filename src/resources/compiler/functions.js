@@ -37,6 +37,7 @@ function functions() {
                 "keyUpReg r0 r3", // check if the event is keyUp
             "ifEqReg r3 1 stdio_func_scanf_int_loop1", // loop
                 "ifEqReg r0 5 stdio_func_scanf_int_end", // check for enter
+                "ifEqReg r0 4 stdio_func_scanf_int_backspace", // check for backspace
                 "pushReg r7", // save r7
                 "pushReg r6", // save r6
                 "pushReg r0", // save r0
@@ -51,6 +52,13 @@ function functions() {
                 "mulReg r6 10 r6", // multiply by the placement
                 "addRegs r6 r0 r6", // add to the value
             "jump stdio_func_scanf_int_loop1", // loop
+            "label stdio_func_scanf_int_backspace",
+                "loadRam 0 r5", // load console index
+                "subReg r5 1 r5", // decrease the console index
+                "saveCnslReg_ 32 r5", // write a space in the previous char
+                "saveRamReg r5 0", // save the console index
+                "divReg r6 10 r6", // divide by 10
+                "jump stdio_func_scanf_int_loop1", // loop
             "label stdio_func_scanf_int_end",
                 "saveRamRegs r6 r7", // save the value
             "push 0",
