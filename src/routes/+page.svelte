@@ -106,8 +106,8 @@
     let workspace;
     let compiler;
     let projectName = "";
-    let projectID = "";
     let lastGeneratedCode = "";
+    let debug = false;
 
     const extensionMetadata = {
         name: "code"
@@ -115,7 +115,8 @@
 
     function updateGeneratedCode() {
         const code = compiler.compile(
-            workspace
+            workspace,
+            debug
         );
         lastGeneratedCode = code;
     }
@@ -317,6 +318,16 @@
                     >
                         Download
                     </StyledButton>
+                    <!-- checkbox for setting debug mode -->
+                    <input
+                        type="checkbox"
+                        id="debug"
+                        name="debug"
+                        value="debug"
+                        bind:checked={debug}
+                        on:change={updateGeneratedCode}
+                    />
+                    <label for="debug">Debug</label>
                 </div>
                 <div class="codeWrapper">
                     <div class="codeDisplay">

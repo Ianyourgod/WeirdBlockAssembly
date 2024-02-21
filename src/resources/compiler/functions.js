@@ -62,7 +62,7 @@ function functions() {
             "label stdio_func_scanf_int_end",
                 "saveRamRegs r6 r7", // save the value
             "push 0",
-            "return",
+        "return",
 
 
     ].join("\n");

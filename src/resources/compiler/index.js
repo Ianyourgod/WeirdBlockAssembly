@@ -1,7 +1,9 @@
 import javascriptGenerator from '../javascriptGenerator';
 import functions from './functions';
+import assembly from './assembly';
 
 class Compiler {
+
     /**
      * Generates JavaScript code from the provided workspace & info.
      * @param {Blockly.Workspace} workspace 
@@ -9,9 +11,7 @@ class Compiler {
      * @param {object} imageStates 
      * @returns {string} Generated code.
      */
-    compile(workspace) {
-        const code = "\n".concat(javascriptGenerator.workspaceToCode(workspace));
-
+    compile(workspace, debug=false) {
         const VAR_START = 1;
         
         window.labelCount = 1;
@@ -22,6 +22,8 @@ class Compiler {
                 pointer: 0
             }
         };
+
+        const code = "\n".concat(javascriptGenerator.workspaceToCode(workspace));
 
         const topCode = [
             "set 0 r0",
@@ -34,7 +36,7 @@ class Compiler {
             "set 0 r7",
 
             // set console index
-            "saveRamReg 0 0", // isnt really needed but just for clarity
+            "saveRam 0 0", // isnt really needed but just for clarity
         
             
             "call func_start",
@@ -47,13 +49,39 @@ class Compiler {
 
         const func_code = functions();
 
-
-        return [
+        const completeCode = [
             topCode,
             code,
             `${code.includes("\nlabel func_start\n") ? "" : "label func_start\npush 0\nreturn"}`,
             func_code // TODO: make functions only exist if used
-        ].join("\n")
+        ];
+
+        if (debug) {
+            return completeCode.join("\n");
+        }
+
+        const newCode = [];
+
+        let completeArray = completeCode.join(" ").split("\n").join(" ").split(" ");
+
+        let i = 0;
+        while (i < completeArray.length) {
+            if (completeArray[i] === "label") {
+                newCode.push(`\nlabel ${completeArray[i + 1]}\n`);
+                i += 1;
+            }
+            else if (assembly[completeArray[i]] !== undefined) {
+                newCode.push(assembly[completeArray[i]]);
+            }
+            else if (completeArray[i] !== "") {
+                newCode.push(completeArray[i]);
+            }
+            i += 1;
+        }
+
+        
+
+        return newCode.join(" ");
     }
 }
 
