@@ -10,7 +10,8 @@ class Category {
             name: "stdio",
             color: "#1DE",
             blocks: [
-                "stdio_printf"
+                "stdio_printf",
+                "stdio_scanfint"
             ]
         }
     }

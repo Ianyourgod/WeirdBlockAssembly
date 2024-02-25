@@ -32,8 +32,10 @@
         <block type="variable_get_pointer" />
     </category>
     
+    <!--
     <category name="stdio" colour="1DE">
         <block type="stdio_printf" />
         <block type="stdio_scanfint" />
     </category>
+    -->
 </xml>

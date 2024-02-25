@@ -52,9 +52,11 @@
     registerOperators();
 
     // temp until extensions are actually working
+    /*
     import stdio from "../resources/extensions/stdio.js";
     let stdioObj = new stdio();
     stdioObj.registerBlocks();
+    */
 
     const en = {
         rtl: false,
@@ -65,6 +67,8 @@
 
     let showExtensionModal = false;
     let dialog;
+
+    let blocklycom = 0;
 
     const config = {
         toolbox: Toolbox,
@@ -109,10 +113,6 @@
     let lastGeneratedCode = "";
     let debug = false;
 
-    const extensionMetadata = {
-        name: "code"
-    }
-
     function updateGeneratedCode() {
         const code = compiler.compile(
             workspace,
@@ -128,6 +128,8 @@
     // this isnt working
     // dont use it
     async function addExtension(extension) {
+        console.log(workspace)
+
         let target = extension.target;
         let name = Array.from(target.classList).includes("extension") ?
             target.attributes :
@@ -154,6 +156,8 @@
 
         config.toolbox = Toolbox
 
+        blocklycom += 1;
+        
         showExtensionModal = false;
         dialog.close();
     }
@@ -275,19 +279,12 @@
         bind:value={projectName}
         on:change={updateGeneratedCode}
     />
-    <!--
-        isnt working
-        dont uncomment
-    <StyledButton on:click={extensionMenu}>
-        <img src="/images/extensions.svg" alt="extensions"/>
-    </StyledButton>
-    -->
 </NavigationBar>
 <div class="main">
     <div class="row-menus">
         <div class="row-first-submenus">
             <div class="blocklyWrapper">
-                <BlocklyComponent {config} locale={en} bind:workspace />
+                <BlocklyComponent {config} locale={en} bind:workspace key={blocklycom}/>
             </div>
         </div>
         <div class="row-submenus">
@@ -328,6 +325,9 @@
                         on:change={updateGeneratedCode}
                     />
                     <label for="debug">Debug</label>
+                    <StyledButton on:click={extensionMenu}>
+                        <img src="/images/extensions.svg" alt="extensions"/>
+                    </StyledButton>
                 </div>
                 <div class="codeWrapper">
                     <div class="codeDisplay">
@@ -492,6 +492,7 @@
         padding: 1rem;
         border-radius: 0.5rem;
         background: #f1f1f1;
+        cursor: pointer;
     }
 
 </style>
